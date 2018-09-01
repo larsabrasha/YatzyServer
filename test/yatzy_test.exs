@@ -14,21 +14,6 @@ defmodule YatzyTest do
     dice |> Enum.each(&assert(&1.value >= 1 && &1.value <= 6))
   end
 
-  test "count_dice" do
-    dice_count = Yatzy.count_dice([2, 6, 1, 3, 3])
-
-    expected_dice_count = [
-      %ValueCount{value: 1, count: 1},
-      %ValueCount{value: 2, count: 1},
-      %ValueCount{value: 3, count: 2},
-      %ValueCount{value: 4, count: 0},
-      %ValueCount{value: 5, count: 0},
-      %ValueCount{value: 6, count: 1}
-    ]
-
-    assert inspect(dice_count) == inspect(expected_dice_count)
-  end
-
   test "numbers" do
     assert Yatzy.numbers([1, 2, 1, 5, 3], 1) == 2
     assert Yatzy.numbers([2, 2, 1, 2, 3], 2) == 6

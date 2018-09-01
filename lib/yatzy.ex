@@ -23,18 +23,10 @@ defmodule Yatzy do
     )
   end
 
-  def count_dice(dice) do
-    1..6
-    |> Enum.map(fn x -> %ValueCount{value: x, count: Enum.count(dice, &(&1 == x))} end)
-  end
-
   def numbers(dice, value) do
-    x =
-      dice
-      |> count_dice
-      |> Enum.find(&(&1.value == value))
-
-    x.value * x.count
+    (dice
+     |> Enum.filter(&(&1 == value))
+     |> Enum.count()) * value
   end
 
   def one_pair(dice) do
