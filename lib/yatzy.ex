@@ -28,71 +28,63 @@ defmodule Yatzy do
     |> Enum.map(fn x -> %ValueCount{value: x, count: Enum.count(dice, &(&1 == x))} end)
   end
 
-  def number_of_different_values(dice) do
-    dice
-    |> count_dice
-    |> Enum.reduce(
-      0,
-      &if(&1.count > 0, do: 1 + &2, else: &2)
-    )
-  end
-
   def numbers(dice, value) do
-    (dice
-     |> count_dice
-     |> Enum.find(&(&1.value == value))).count
+    x =
+      dice
+      |> count_dice
+      |> Enum.find(&(&1.value == value))
+
+    x.value * x.count
   end
 
   def one_pair(dice) do
-    dice
-    |> count_dice
-    |> Enum.reduce(0, &if(&1.count >= 2 && &1.value * 2 > &2, do: &1.value * 2, else: &2))
+    case dice |> Enum.sort() do
+      [_, _, _, a, a] -> a * 2
+      [_, _, a, a, _] -> a * 2
+      [_, a, a, _, _] -> a * 2
+      [a, a, _, _, _] -> a * 2
+      _ -> 0
+    end
   end
 
   def two_pairs(dice) do
-    dice
-    |> count_dice
-    |> Enum.sort(&(&1.value >= &2.value))
-    |> Enum.reduce(%{best_twos: 0, next_best_twos: 0}, fn cur, acc ->
-      cond do
-        cur.count >= 2 && cur.value * 2 > acc.best_twos ->
-          %{best_twos: cur.value * 2, next_best_twos: acc.next_best_twos}
-
-        cur.count >= 2 && cur.value * 2 > acc.next_best_twos ->
-          %{best_twos: acc.best_twos, next_best_twos: cur.value * 2}
-
-        true ->
-          acc
-      end
-    end)
-    |> (&if(&1.best_twos > 0 && &1.next_best_twos > 0,
-          do: &1.best_twos + &1.next_best_twos,
-          else: 0
-        )).()
+    case dice |> Enum.sort() do
+      [_, a, a, b, b] when a != b -> a * 2 + b * 2
+      [a, a, _, b, b] when a != b -> a * 2 + b * 2
+      [a, a, b, b, _] when a != b -> a * 2 + b * 2
+      _ -> 0
+    end
   end
 
-  def three_same(dice) do
-    dice
-    |> count_dice
-    |> Enum.reduce(0, &if(&1.count >= 3, do: &1.value * 3, else: &2))
+  def three_of_a_kind(dice) do
+    case dice |> Enum.sort() do
+      [_, _, a, a, a] -> a * 3
+      [_, a, a, a, _] -> a * 3
+      [a, a, a, _, _] -> a * 3
+      _ -> 0
+    end
   end
 
-  def four_same(dice) do
-    dice
-    |> count_dice
-    |> Enum.reduce(0, &if(&1.count >= 4, do: &1.value * 4, else: &2))
+  def four_of_a_kind(dice) do
+    case dice |> Enum.sort() do
+      [_, a, a, a, a] -> a * 4
+      [a, a, a, a, _] -> a * 4
+      _ -> 0
+    end
   end
 
   def small_straight(dice) do
-    1..5
-    |> Enum.all?(&(Enum.count(dice, fn x -> x == &1 end) == 1))
-    |> (&if(&1, do: 15, else: 0)).()
+    case dice |> Enum.sort() do
+      [1, 2, 3, 4, 5] -> 15
+      _ -> 0
+    end
   end
 
-  def big_straight(dice) do
-    2..6
-    |> Enum.all?(&(Enum.count(dice, fn x -> x == &1 end) == 1))
-    |> (&if(&1, do: 20, else: 0)).()
+  def large_straight(dice) do
+    case dice |> Enum.sort() do
+      [2, 3, 4, 5, 6] -> 20
+      _ -> 0
+    end
   end
 
   def chance(dice) do
@@ -100,27 +92,18 @@ defmodule Yatzy do
     |> Enum.sum()
   end
 
-  def kak(dice) do
-    dice
-    |> count_dice
-    |> Enum.reduce(%{best_threes: 0, best_twos: 0}, fn cur, acc ->
-      cond do
-        cur.count >= 3 && cur.value * 3 > acc.best_threes ->
-          %{best_threes: cur.value * 3, best_twos: acc.best_twos}
-
-        cur.count >= 2 && cur.value * 2 > acc.best_twos ->
-          %{best_threes: acc.best_threes, best_twos: cur.value * 2}
-
-        true ->
-          acc
-      end
-    end)
-    |> (&if(&1.best_threes > 0 && &1.best_twos > 0, do: &1.best_threes + &1.best_twos, else: 0)).()
+  def full_house(dice) do
+    case dice |> Enum.sort() do
+      [a, a, b, b, b] when a != b -> dice |> Enum.sum()
+      [a, a, a, b, b] when a != b -> dice |> Enum.sum()
+      _ -> 0
+    end
   end
 
   def yatzy(dice) do
-    dice
-    |> count_dice
-    |> Enum.reduce(0, &if(&1.count >= 5, do: 50, else: &2))
+    case dice do
+      [a, a, a, a, a] -> 50
+      _ -> 0
+    end
   end
 end

@@ -29,19 +29,13 @@ defmodule YatzyTest do
     assert inspect(dice_count) == inspect(expected_dice_count)
   end
 
-  test "number_of_different_values" do
-    assert Yatzy.number_of_different_values([1, 2, 3, 4, 5]) == 5
-    assert Yatzy.number_of_different_values([1, 1, 1, 1, 1]) == 1
-    assert Yatzy.number_of_different_values([1, 1, 1, 5, 5]) == 2
-  end
-
   test "numbers" do
     assert Yatzy.numbers([1, 2, 1, 5, 3], 1) == 2
-    assert Yatzy.numbers([2, 2, 1, 2, 3], 2) == 3
-    assert Yatzy.numbers([2, 2, 1, 2, 3], 3) == 1
-    assert Yatzy.numbers([4, 4, 4, 2, 4], 4) == 4
-    assert Yatzy.numbers([2, 2, 5, 2, 3], 5) == 1
-    assert Yatzy.numbers([6, 2, 1, 2, 6], 6) == 2
+    assert Yatzy.numbers([2, 2, 1, 2, 3], 2) == 6
+    assert Yatzy.numbers([2, 2, 1, 2, 3], 3) == 3
+    assert Yatzy.numbers([4, 4, 4, 2, 4], 4) == 16
+    assert Yatzy.numbers([2, 2, 5, 2, 3], 5) == 5
+    assert Yatzy.numbers([6, 2, 1, 2, 6], 6) == 12
     assert Yatzy.numbers([6, 2, 3, 2, 6], 1) == 0
   end
 
@@ -56,19 +50,22 @@ defmodule YatzyTest do
     assert Yatzy.two_pairs([1, 1, 1, 6, 6]) == 14
     assert Yatzy.two_pairs([1, 2, 3, 4, 5]) == 0
     assert Yatzy.two_pairs([1, 1, 3, 4, 5]) == 0
+    assert Yatzy.two_pairs([5, 5, 5, 5, 5]) == 0
   end
 
-  test "three_same" do
-    assert Yatzy.three_same([1, 1, 1, 4, 5]) == 3
-    assert Yatzy.three_same([2, 1, 2, 2, 5]) == 6
-    assert Yatzy.three_same([2, 1, 2, 5, 5]) == 0
+  test "three_of_a_kind" do
+    assert Yatzy.three_of_a_kind([1, 1, 1, 4, 5]) == 3
+    assert Yatzy.three_of_a_kind([2, 1, 2, 2, 5]) == 6
+    assert Yatzy.three_of_a_kind([2, 1, 2, 5, 5]) == 0
+    assert Yatzy.three_of_a_kind([3, 3, 3, 3, 3]) == 9
   end
 
-  test "four_same" do
-    assert Yatzy.four_same([1, 2, 3, 4, 5]) == 0
-    assert Yatzy.four_same([1, 1, 2, 2, 5]) == 0
-    assert Yatzy.four_same([1, 1, 1, 5, 5]) == 0
-    assert Yatzy.four_same([2, 2, 2, 2, 5]) == 8
+  test "four_of_a_kind" do
+    assert Yatzy.four_of_a_kind([1, 2, 3, 4, 5]) == 0
+    assert Yatzy.four_of_a_kind([1, 1, 2, 2, 5]) == 0
+    assert Yatzy.four_of_a_kind([1, 1, 1, 5, 5]) == 0
+    assert Yatzy.four_of_a_kind([2, 2, 2, 2, 5]) == 8
+    assert Yatzy.four_of_a_kind([2, 2, 2, 2, 2]) == 8
   end
 
   test "small_straight" do
@@ -77,10 +74,10 @@ defmodule YatzyTest do
     assert Yatzy.small_straight([2, 2, 3, 5, 6]) == 0
   end
 
-  test "big_straight" do
-    assert Yatzy.big_straight([1, 2, 3, 4, 5]) == 0
-    assert Yatzy.big_straight([2, 3, 4, 5, 6]) == 20
-    assert Yatzy.big_straight([2, 2, 3, 5, 6]) == 0
+  test "large_straight" do
+    assert Yatzy.large_straight([1, 2, 3, 4, 5]) == 0
+    assert Yatzy.large_straight([2, 3, 4, 5, 6]) == 20
+    assert Yatzy.large_straight([2, 2, 3, 5, 6]) == 0
   end
 
   test "chance" do
@@ -89,11 +86,11 @@ defmodule YatzyTest do
     assert Yatzy.chance([2, 2, 3, 5, 6]) == 18
   end
 
-  test "kak" do
-    assert Yatzy.kak([1, 1, 1, 1, 1]) == 0
-    assert Yatzy.kak([1, 1, 1, 1, 5]) == 0
-    assert Yatzy.kak([1, 1, 1, 5, 5]) == 13
-    assert Yatzy.kak([1, 1, 2, 5, 5]) == 0
+  test "full_house" do
+    assert Yatzy.full_house([1, 1, 1, 1, 1]) == 0
+    assert Yatzy.full_house([1, 1, 1, 1, 5]) == 0
+    assert Yatzy.full_house([1, 1, 1, 5, 5]) == 13
+    assert Yatzy.full_house([1, 1, 2, 5, 5]) == 0
   end
 
   test "yatzy" do
